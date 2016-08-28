@@ -9,7 +9,15 @@
 
 ;;; Commentary:
 
-;; See the README for more details.
+;; This package adds support for flow to company. It requires
+;; flow to be in your path.
+
+;; To use it, add to your company-backends for your preferred javascript modes,
+;; for example:
+
+;; (setq company-backends-js2-mode '((company-flow :with company-dabbrev)
+;;                                     company-files
+;;                                     company-dabbrev))
 
 ;;; License:
 
