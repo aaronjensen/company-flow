@@ -5,7 +5,7 @@
 ;; Author: Aaron Jensen <aaronjensen@gmail.com>
 ;; URL: https://github.com/aaronjensen/company-flow
 ;; Version: 0.1.0
-;; Package-Requires: ((company "0.8.0") (cl-lib "0.5.0"))
+;; Package-Requires: ((company "0.8.0") (cl-lib "0.5.0") (dash "2.13.0"))
 
 ;;; Commentary:
 
@@ -40,7 +40,9 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(require 'company)
 (require 'cl-lib)
+(require 'dash)
 
 (defun company-flow-handle-signal (process _event)
   (when (memq (process-status process) '(signal exit))
@@ -85,16 +87,15 @@ PROCESS, and terminates standard input with EOF."
 (defun company-flow-candidates-query (prefix callback)
   (let* ((default-directory "~/Source/the-link")
         (line (line-number-at-pos (point)))
-        (col (+ 1 (column-number-at-pos (point))))
+        (col (+ 1 (current-column)))
         (command (list "flow"
                        "autocomplete"
                        buffer-file-name
                        (number-to-string line)
-                       (number-to-string col))))
-    (setq process
-          (apply 'start-process "company-flow" nil command))
-    (setf (process-sentinel process) #'company-flow-handle-signal)
-    (setf (process-filter process) #'company-flow-receive-checker-output)
+                       (number-to-string col)))
+        (process (apply 'start-process "company-flow" nil command)))
+    (set-process-sentinel process #'company-flow-handle-signal)
+    (set-process-filter process #'company-flow-receive-checker-output)
     (process-put process 'company-flow-callback callback)
     (process-put process 'company-flow-prefix prefix)
     (company-flow-process-send-buffer process)))
@@ -108,10 +109,10 @@ PROCESS, and terminates standard input with EOF."
 (defun company-flow-annotation (candidate)
   (format " %s" (get-text-property 0 'meta candidate)))
 
-(defun company-flow-meta (candidate)
+(defun company-flow-meta (_candidate)
   nil)
 
-(defun company-flow-doc (candidate)
+(defun company-flow-doc (_candidate)
   nil)
 
 ;;;###autoload
@@ -130,3 +131,4 @@ PROCESS, and terminates standard input with EOF."
                         (company-flow-candidates-query arg callback))))))
 
 (provide 'company-flow)
+;;; company-flow.el ends here
