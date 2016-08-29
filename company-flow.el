@@ -107,7 +107,9 @@ PROCESS, and terminates standard input with EOF."
 
 (defun company-flow--prefix ()
   "Grab prefix for flow."
-  (and (not (company-in-string-or-comment))
+  (and buffer-file-name
+       (file-exists-p buffer-file-name)
+       (not (company-in-string-or-comment))
        (or (company-grab-symbol-cons "\\." 1)
            'stop)))
 
