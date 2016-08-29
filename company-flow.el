@@ -88,6 +88,8 @@ PROCESS, and terminates standard input with EOF."
   (save-restriction
     (widen)
     (process-send-region process (point-min) (point-max)))
+  ;; flow requires EOF be on its own line
+  (process-send-string process "\n")
   (process-send-eof process))
 
 (defun company-flow--candidates-query (prefix callback)
