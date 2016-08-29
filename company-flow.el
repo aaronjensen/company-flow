@@ -54,10 +54,15 @@
                              (all-completions prefix))))))
 
 (defun company-flow--make-candidate (line)
-  (let* ((words (split-string line " "))
-         (text (car words))
-         (meta (mapconcat 'identity (cdr words) " ")))
-    (propertize text 'meta meta)))
+  "Creates a candidate with a meta property from LINE.
+
+LINE is expected to look like:
+registrationSuccess () => {type: 'REGISTRATION_SUCCESS'}"
+  (let ((first-space (string-match " " line)))
+    (when first-space
+      (let ((text (substring line 0 first-space))
+            (meta (substring line (+ 1 first-space))))
+        (propertize text 'meta meta)))))
 
 (defun company-flow--parse-output (output)
   (mapcar 'company-flow--make-candidate
