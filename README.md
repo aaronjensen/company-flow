@@ -1,6 +1,6 @@
 # Company flow
 
-[Flow][] backend for [company-mode][].
+[Flow][] backend for [company-mode][]. Flow-based autocomplete for Emacs.
 
 ## Installation
 
