@@ -51,6 +51,8 @@
       (funcall callback (->> process
                              company-flow--get-output
                              company-flow--parse-output
+                             ;; Remove nils
+                             (--filter it)
                              (all-completions prefix))))))
 
 (defun company-flow--make-candidate (line)
