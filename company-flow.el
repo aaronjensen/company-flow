@@ -5,7 +5,7 @@
 ;; Author: Aaron Jensen <aaronjensen@gmail.com>
 ;; URL: https://github.com/aaronjensen/company-flow
 ;; Version: 0.1.0
-;; Package-Requires: ((company "0.8.0") (cl-lib "0.5.0") (dash "2.13.0"))
+;; Package-Requires: ((company "0.8.0") (dash "2.13.0"))
 
 ;;; Commentary:
 
@@ -41,7 +41,6 @@
 
 ;;; Code:
 (require 'company)
-(require 'cl-lib)
 (require 'dash)
 
 (defun company-flow--handle-signal (process _event)
@@ -117,15 +116,15 @@ PROCESS, and terminates standard input with EOF."
 ;;;###autoload
 (defun company-flow (command &optional arg &rest _args)
   (interactive (list 'interactive))
-  (cl-case command
-    (interactive (company-begin-backend 'company-flow))
-    (prefix (company-flow--prefix))
-    (annotation (company-flow--annotation arg))
-    (meta (company-flow--meta arg))
-    (doc-buffer (company-flow--doc arg))
-    (ignore-case t)
-    (sorted t)
-    (candidates (cons :async
+  (pcase command
+    (`interactive (company-begin-backend 'company-flow))
+    (`prefix (company-flow--prefix))
+    (`annotation (company-flow--annotation arg))
+    (`meta (company-flow--meta arg))
+    (`doc-buffer (company-flow--doc arg))
+    (`ignore-case t)
+    (`sorted t)
+    (`candidates (cons :async
                       (lambda (callback)
                         (company-flow--candidates-query arg callback))))))
 
