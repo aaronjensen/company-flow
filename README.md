@@ -18,15 +18,21 @@ Add to your company-backends for your preferred javascript modes,
 for example:
 
 ```elisp
-(setq company-backends-js2-mode '((company-flow :with company-dabbrev)
-                                    company-files
-                                    company-dabbrev))
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-flow))
 ```
+
+## Configuration
+
+### `company-flow-modes`
+
+List of major modes where `company-flow` should provide completions if it is
+part of `company-backends`. Set to `nil` to enable `company-flow` for all major modes.
 
 ## Thanks
 
 * [@proofit404][] for a nice example backend with [company-tern][].
-* [@dgutov][] for [company-mode][].
+* [@dgutov][] for [company-mode][] and lots of feedback.
 * [@lunaryorn][] for the process communication code from [flycheck][].
 
 [Flow]: https://flowtype.org/

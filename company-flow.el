@@ -12,12 +12,10 @@
 ;; This package adds support for flow to company. It requires
 ;; flow to be in your path.
 
-;; To use it, add to your company-backends for your preferred javascript modes,
-;; for example:
+;; To use it, add to your company-backends:
 
-;; (setq company-backends-js2-mode '((company-flow :with company-dabbrev)
-;;                                     company-files
-;;                                     company-dabbrev))
+;;   (eval-after-load 'company
+;;     '(add-to-list 'company-backends 'company-flow))
 
 ;;; License:
 
@@ -42,6 +40,21 @@
 ;;; Code:
 (require 'company)
 (require 'dash)
+
+(defgroup company-flow ()
+  "Flow company backend."
+  :group 'editing
+  :prefix "company-flow-")
+
+(defcustom company-flow-modes '(
+                                js-mode
+                                js2-mode
+                                web-mode
+                                )
+  "List of major modes where company-flow will be providing completions."
+  :type '(choice (const :tag "All" nil)
+                 (repeat (symbol :tag "Major mode")))
+  :group 'company-flow)
 
 (defun company-flow--handle-signal (process _event)
   (when (memq (process-status process) '(signal exit))
@@ -111,7 +124,9 @@ PROCESS, and terminates standard input with EOF."
 
 (defun company-flow--prefix ()
   "Grab prefix for flow."
-  (and buffer-file-name
+  (and (or (null company-flow-modes)
+           (-contains? company-flow-modes major-mode))
+       buffer-file-name
        (file-exists-p buffer-file-name)
        (not (company-in-string-or-comment))
        (or (company-grab-symbol-cons "\\." 1)
