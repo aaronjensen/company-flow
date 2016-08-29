@@ -85,15 +85,14 @@ PROCESS, and terminates standard input with EOF."
   (process-send-eof process))
 
 (defun company-flow-candidates-query (prefix callback)
-  (let* ((default-directory "~/Source/the-link")
-        (line (line-number-at-pos (point)))
-        (col (+ 1 (current-column)))
-        (command (list "flow"
-                       "autocomplete"
-                       buffer-file-name
-                       (number-to-string line)
-                       (number-to-string col)))
-        (process (apply 'start-process "company-flow" nil command)))
+  (let* ((line (line-number-at-pos (point)))
+         (col (+ 1 (current-column)))
+         (command (list "flow"
+                        "autocomplete"
+                        buffer-file-name
+                        (number-to-string line)
+                        (number-to-string col)))
+         (process (apply 'start-process "company-flow" nil command)))
     (set-process-sentinel process #'company-flow-handle-signal)
     (set-process-filter process #'company-flow-receive-checker-output)
     (process-put process 'company-flow-callback callback)
