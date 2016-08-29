@@ -135,7 +135,6 @@ PROCESS, and terminates standard input with EOF."
     (`annotation (company-flow--annotation arg))
     (`meta (company-flow--meta arg))
     (`doc-buffer (company-flow--doc arg))
-    (`ignore-case t)
     (`sorted t)
     (`candidates (cons :async
                       (lambda (callback)
