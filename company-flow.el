@@ -47,13 +47,15 @@
   (when (memq (process-status process) '(signal exit))
     (let ((callback (process-get process 'company-flow-callback))
           (prefix (process-get process 'company-flow-prefix)))
-      ;; (message "%S" (company-flow--parse-output (company-flow--get-output process)))
-      (funcall callback (->> process
-                             company-flow--get-output
-                             company-flow--parse-output
-                             ;; Remove nils
-                             (--filter it)
-                             (all-completions prefix))))))
+      (if (and (eq (process-status process) 'exit)
+               (eq (process-exit-status process) 0))
+          (funcall callback (->> process
+                                 company-flow--get-output
+                                 company-flow--parse-output
+                                 ;; Remove nils
+                                 (--filter it)
+                                 (all-completions prefix)))
+        (funcall callback nil)))))
 
 (defun company-flow--make-candidate (line)
   "Creates a candidate with a meta property from LINE.
