@@ -43,7 +43,7 @@
 
 (defgroup company-flow ()
   "Flow company backend."
-  :group 'editing
+  :group 'company
   :prefix "company-flow-")
 
 (defcustom company-flow-modes '(
