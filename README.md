@@ -1,4 +1,4 @@
-# Company flow
+# Company flow [![MELPA](https://melpa.org/packages/company-flow-badge.svg)](https://melpa.org/#/company-flow)
 
 [Flow][] backend for [company-mode][]. Flow-based autocomplete for Emacs.
 
