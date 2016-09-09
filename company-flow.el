@@ -66,8 +66,7 @@
                                  company-flow--get-output
                                  company-flow--parse-output
                                  ;; Remove nils
-                                 (--filter it)
-                                 (all-completions prefix)))
+                                 (--filter it)))
         (funcall callback nil)))))
 
 (defun company-flow--make-candidate (line)
@@ -136,6 +135,36 @@ PROCESS, and terminates standard input with EOF."
 (defun company-flow--annotation (candidate)
   (format " %s" (get-text-property 0 'meta candidate)))
 
+(defvar-local company-flow--debounce-state nil)
+
+(defun company-flow--debounce-callback (prefix callback)
+  (lambda (candidates)
+    (let ((current-prefix (car company-flow--debounce-state))
+          (current-callback (cdr company-flow--debounce-state)))
+      (when (and current-prefix
+                 (string-prefix-p prefix current-prefix))
+        (setq company-flow--debounce-state nil)
+        (funcall current-callback (all-completions current-prefix candidates))))))
+
+(defun company-flow--debounce-async (prefix candidate-fn)
+  "Return a function that will properly debounce candidate queries by comparing the
+in-flight query's prefix to PREFIX. CANDIDATE-FN should take two arguments, PREFIX
+and the typical async callback.
+
+Note that the candidate list provided to the callback by CANDIDATE-FN will be
+filtered via `all-completions' with the most current prefix, so it is not necessary
+to do this filtering in CANDIDATE-FN.
+
+Use like:
+
+  (cons :async (company-flow--debounce-async arg 'your-query-fn))"
+  (lambda (callback)
+    (let ((current-prefix (car company-flow--debounce-state)))
+      (unless (and current-prefix
+                   (string-prefix-p prefix current-prefix))
+        (funcall candidate-fn prefix (company-flow--debounce-callback prefix callback)))
+      (setq company-flow--debounce-state (cons prefix callback)))))
+
 ;;;###autoload
 (defun company-flow (command &optional arg &rest _args)
   (interactive (list 'interactive))
@@ -144,9 +173,7 @@ PROCESS, and terminates standard input with EOF."
     (`prefix (company-flow--prefix))
     (`annotation (company-flow--annotation arg))
     (`sorted t)
-    (`candidates (cons :async
-                      (lambda (callback)
-                        (company-flow--candidates-query arg callback))))))
+    (`candidates (cons :async (company-flow--debounce-async arg 'company-flow--candidates-query)))))
 
 (provide 'company-flow)
 ;;; company-flow.el ends here
