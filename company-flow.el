@@ -46,6 +46,12 @@
   :group 'company
   :prefix "company-flow-")
 
+(defcustom company-flow-executable "flow"
+  "Flow executable to run."
+  :group 'company-flow
+  :type 'string)
+(make-variable-buffer-local 'company-flow-executable)
+
 (defcustom company-flow-modes '(
                                 js-mode
                                 js2-mode
@@ -109,7 +115,7 @@ PROCESS, and terminates standard input with EOF."
 (defun company-flow--candidates-query (prefix callback)
   (let* ((line (line-number-at-pos (point)))
          (col (+ 1 (current-column)))
-         (command (list "flow"
+         (command (list company-flow-executable
                         "autocomplete"
                         buffer-file-name
                         (number-to-string line)
@@ -126,6 +132,7 @@ PROCESS, and terminates standard input with EOF."
   "Grab prefix for flow."
   (and (or (null company-flow-modes)
            (-contains? company-flow-modes major-mode))
+       company-flow-executable
        buffer-file-name
        (file-exists-p buffer-file-name)
        (not (company-in-string-or-comment))

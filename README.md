@@ -24,6 +24,11 @@ for example:
 
 ## Configuration
 
+### `company-flow-executable`
+
+Buffer local variable that should point to the flow executable. Defaults to
+`"flow"`. Set to `nil` to disable `company-flow`.
+
 ### `company-flow-modes`
 
 List of major modes where `company-flow` should provide completions if it is
