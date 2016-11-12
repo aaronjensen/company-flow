@@ -115,7 +115,7 @@ PROCESS, and terminates standard input with EOF."
 (defun company-flow--candidates-query (prefix callback)
   (let* ((line (line-number-at-pos (point)))
          (col (+ 1 (current-column)))
-         (command (list company-flow-executable
+         (command (list (executable-find company-flow-executable)
                         "autocomplete"
                         buffer-file-name
                         (number-to-string line)
