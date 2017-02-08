@@ -87,8 +87,9 @@ registrationSuccess () => {type: 'REGISTRATION_SUCCESS'}"
         (propertize text 'meta meta)))))
 
 (defun company-flow--parse-output (output)
-  (mapcar 'company-flow--make-candidate
-          (split-string output "\n")))
+  (when (not (equal output "Error: not enough type information to autocomplete\n"))
+    (mapcar 'company-flow--make-candidate
+            (split-string output "\n"))))
 
 (defun company-flow--get-output (process)
   "Get the complete output of PROCESS."
