@@ -154,9 +154,20 @@ PROCESS, and terminates standard input with EOF."
     (let ((current-prefix (car company-flow--debounce-state))
           (current-callback (cdr company-flow--debounce-state)))
       (when (and current-prefix
-                 (string-prefix-p prefix current-prefix))
+                 (company-flow--string-prefix-p prefix current-prefix))
         (setq company-flow--debounce-state nil)
         (funcall current-callback (all-completions current-prefix candidates))))))
+
+(defun company-flow--prefix-to-string (prefix)
+  "Return a string or nil from a prefix.
+  `company-grab-symbol-cons' can return (\"prefix\" . t) or just
+  \"prefix\", but we only care about the string."
+  (if (consp prefix)
+      (car prefix)
+    prefix))
+
+(defun company-flow--string-prefix-p (a b)
+  (string-prefix-p (company-flow--prefix-to-string a) (company-flow--prefix-to-string b)))
 
 (defun company-flow--debounce-async (prefix candidate-fn)
   "Return a function that will properly debounce candidate queries by comparing the
@@ -173,9 +184,9 @@ Use like:
   (lambda (callback)
     (let ((current-prefix (car company-flow--debounce-state)))
       (unless (and current-prefix
-                   (string-prefix-p prefix current-prefix))
+                   (company-flow--string-prefix-p prefix current-prefix))
         (funcall candidate-fn prefix (company-flow--debounce-callback prefix callback)))
-      (setq company-flow--debounce-state (cons prefix callback)))))
+      (setq company-flow--debounce-state (cons (company-flow--prefix-to-string prefix) callback)))))
 
 ;;;###autoload
 (defun company-flow (command &optional arg &rest _args)
