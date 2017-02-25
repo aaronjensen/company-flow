@@ -134,6 +134,7 @@ PROCESS, and terminates standard input with EOF."
   (and (or (null company-flow-modes)
            (-contains? company-flow-modes major-mode))
        company-flow-executable
+       (executable-find company-flow-executable)
        buffer-file-name
        (file-exists-p buffer-file-name)
        (not (company-in-string-or-comment))
