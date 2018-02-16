@@ -57,6 +57,7 @@
                                 js-jsx-mode
                                 js2-mode
                                 js2-jsx-mode
+                                rjsx-mode
                                 web-mode
                                 )
   "List of major modes where company-flow will be providing completions."
