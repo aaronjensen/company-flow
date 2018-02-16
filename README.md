@@ -29,6 +29,29 @@ for example:
 Buffer local variable that should point to the flow executable. Defaults to
 `"flow"`. Set to `nil` to disable `company-flow`.
 
+For best performance, you can set this to the actual flow binary in your
+project. Here's one way to do that:
+
+```elisp
+(defun flow/set-flow-executable ()
+  (interactive)
+  (let* ((os (pcase system-type
+               ('darwin "osx")
+               ('gnu/linux "linux64")
+               (_ nil)))
+         (root (locate-dominating-file  buffer-file-name  "node_modules/flow-bin"))
+         (executable (car (file-expand-wildcards
+                           (concat root "node_modules/flow-bin/*" os "*/flow")))))
+    (setq-local company-flow-executable executable)
+    ;; These are not necessary for this package, but a good idea if you use
+    ;; these other packages
+    (setq-local flow-minor-default-binary executable)
+    (setq-local flycheck-javascript-flow-executable executable)))
+
+;; Set this to the mode you use, I use rjsx-mode
+(add-hook 'rjsx-mode-hook #'flow/set-flow-executable t)
+```
+
 ### `company-flow-modes`
 
 List of major modes where `company-flow` should provide completions if it is
