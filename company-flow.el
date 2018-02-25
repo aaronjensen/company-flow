@@ -121,6 +121,7 @@ PROCESS, and terminates standard input with EOF."
          (col (+ 1 (current-column)))
          (command (list (executable-find company-flow-executable)
                         "autocomplete"
+                        "--quiet"
                         buffer-file-name
                         (number-to-string line)
                         (number-to-string col)))
